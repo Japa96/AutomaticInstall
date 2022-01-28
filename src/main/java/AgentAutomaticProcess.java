@@ -5,6 +5,7 @@ import javax.swing.text.html.parser.Parser;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.util.Scanner;
 
 public class AgentAutomaticProcess {
@@ -27,14 +28,73 @@ public class AgentAutomaticProcess {
     public static void main(String[] args) throws InterruptedException {
 
         Scanner scanner = new Scanner(System.in);
-
-        System.out.println("###################   Checagem serviço   ###################");
-
         RestartServiceController restartServiceController = new RestartServiceController();
-        restartServiceController.restartService();
+
+        System.out.println("###################   Remoção Control e Logs   ###################\n");
+
+        boolean ModuleStatusService = restartServiceController.checkStatusService();
+
+        if (ModuleStatusService){
+
+            try {
+                restartServiceController.stopService();
+
+                Thread.sleep(5000);
+
+                System.out.println("\nTentando deletar diretório Control e Logs...");
+                boolean statusDelete = tryDeleteFolderControlLogs();
+
+                if (!statusDelete){
+
+                    Thread.sleep(5000);
+                    tryDeleteFolderControlLogs();
+                    System.out.println("\nFinalizado processo de exclusão de diretórios.");
+                }
+
+            }catch(Exception exception){
+
+                exception.getMessage();
+            }
+
+        }else{
+            try {
+                boolean statusDelete = tryDeleteFolderControlLogs();
+                System.out.println("\nFinalizado processo de exclusão de diretórios.");
+
+            }catch(Exception exception){
+
+                exception.getMessage();
+            }
+        }
 
 
-        System.out.println("###################   Bem-vindo a ferramenta de ped_install   ###################");
+        System.out.println("###################   Checagem serviço   ###################\n");
+
+        boolean statusService = restartServiceController.checkStatusService();
+
+        if(statusService == true){
+            System.out.println("\nServiço já está iniciado.");
+        }else {
+            restartServiceController.startService();
+            Thread.sleep(2000);
+
+            boolean checkServiceAgain = restartServiceController.checkStatusService();
+
+            while (checkServiceAgain == false){
+
+                System.out.println("Erro ao iniciar o serviço. Checar se o mesmo está desativado.");
+
+                Thread.sleep(5000);
+
+                checkServiceAgain = restartServiceController.checkStatusService();
+                restartServiceController.startService();
+            }
+
+            System.out.println("\nServiço iniciado com sucesso.");
+
+        }
+
+        System.out.println("\n\n###################   Bem-vindo a ferramenta de ped_install   ###################");
 
         System.out.println(" 1 - Agente/Concentrador");
         System.out.println(" 2 - Web Service Router");
@@ -146,7 +206,7 @@ public class AgentAutomaticProcess {
 
     public static void generateFile() throws InterruptedException {
         if (set_num == SetNum.SET_NUM_EXISTENTE.getCode()) {
-            System.out.println("########## Em processamento ##########");
+            System.out.println("########## Em processamento ##########\n");
             for (int i = 1; i <= quantidadeArquivos; i++) {
                 writeFileWithSetNum(i);
                 System.out.println("O arquivo com SET_NUM do " + nomeAgente + " " + i + " foi gerado com sucesso.");
@@ -158,7 +218,7 @@ public class AgentAutomaticProcess {
 
         }
         if (set_num == SetNum.SET_NUM_INEXISTENTE.getCode()) {
-            System.out.println("########## Em processamento ##########");
+            System.out.println("########## Em processamento ##########\n");
             for (int i = 1; i <= quantidadeArquivos; i++) {
                 writeFileWithOutSetNum(i);
                 System.out.println("O arquivo  do " + nomeAgente + " " + i + " foi gerado com sucesso.");
@@ -272,6 +332,27 @@ public class AgentAutomaticProcess {
                 System.out.println("Diretório vazio.");
             }
         }
+    }
+
+    public static boolean tryDeleteFolderControlLogs() {
+
+        String control = "C:\\Program Files\\NDDigital\\eForms_NFCe\\Agent Service\\control";
+        String logs = "C:\\Program Files\\NDDigital\\eForms_NFCe\\Agent Service\\logs";
+
+        File directoryControl = new File(control);
+        File directoryLogs = new File(logs);
+
+        if (directoryControl.isDirectory()){
+            directoryControl.delete();
+            System.out.println("Diretório control excluído com sucesso.");
+
+            if (directoryLogs.isDirectory()){
+                directoryLogs.delete();
+                System.out.println("Diretório logs excluído com sucesso.");
+                return true;
+            }
+        }
+            return false;
     }
 
 }
