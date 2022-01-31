@@ -1,5 +1,6 @@
 import Utils.Modules;
 import Utils.SetNum;
+import org.apache.commons.io.FileUtils;
 
 import javax.swing.text.html.parser.Parser;
 import java.io.File;
@@ -48,6 +49,7 @@ public class AgentAutomaticProcess {
 
                     Thread.sleep(5000);
                     tryDeleteFolderControlLogs();
+                    Thread.sleep(30000);
                     System.out.println("\nFinalizado processo de exclusão de diretórios.");
                 }
 
@@ -334,7 +336,7 @@ public class AgentAutomaticProcess {
         }
     }
 
-    public static boolean tryDeleteFolderControlLogs() {
+    public static boolean tryDeleteFolderControlLogs() throws IOException {
 
         String control = "C:\\Program Files\\NDDigital\\eForms_NFCe\\Agent Service\\control";
         String logs = "C:\\Program Files\\NDDigital\\eForms_NFCe\\Agent Service\\logs";
@@ -343,11 +345,13 @@ public class AgentAutomaticProcess {
         File directoryLogs = new File(logs);
 
         if (directoryControl.isDirectory()){
-            directoryControl.delete();
+            FileUtils.deleteDirectory(directoryControl);
+            //directoryControl.delete();
             System.out.println("Diretório control excluído com sucesso.");
 
             if (directoryLogs.isDirectory()){
-                directoryLogs.delete();
+                FileUtils.deleteDirectory(directoryLogs);
+                //directoryLogs.delete();
                 System.out.println("Diretório logs excluído com sucesso.");
                 return true;
             }
