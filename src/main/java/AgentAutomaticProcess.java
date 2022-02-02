@@ -20,6 +20,7 @@ public class AgentAutomaticProcess {
     private static String nomeAgente;
     private static String routerurl;
     private static String wsurl;
+    private static String input = "";
     private static int set_num;
     private static int serie;
     private static int number;
@@ -29,7 +30,7 @@ public class AgentAutomaticProcess {
     private static int sucesso = 0;
     private static int falha = 0;
 
-    public static void main(String[] args) throws InterruptedException, FileNotFoundException {
+    public static void main(String[] args) throws InterruptedException, IOException {
 
         Scanner scanner = new Scanner(System.in);
         RestartServiceController restartServiceController = new RestartServiceController();
@@ -38,7 +39,7 @@ public class AgentAutomaticProcess {
 
         boolean ModuleStatusService = restartServiceController.checkStatusService();
 
-        if (ModuleStatusService){
+        if (ModuleStatusService) {
 
             try {
                 restartServiceController.stopService();
@@ -48,7 +49,7 @@ public class AgentAutomaticProcess {
                 System.out.println("\nTentando deletar diretório Control e Logs...");
                 boolean statusDelete = tryDeleteFolderControlLogs();
 
-                if (!statusDelete){
+                if (!statusDelete) {
 
                     Thread.sleep(10000);
                     tryDeleteFolderControlLogs();
@@ -56,17 +57,17 @@ public class AgentAutomaticProcess {
                     System.out.println("\nFinalizado processo de exclusão de diretórios.");
                 }
 
-            }catch(Exception exception){
+            } catch (Exception exception) {
 
                 exception.getMessage();
             }
 
-        }else{
+        } else {
             try {
                 boolean statusDelete = tryDeleteFolderControlLogs();
                 System.out.println("\nFinalizado processo de exclusão de diretórios.");
 
-            }catch(Exception exception){
+            } catch (Exception exception) {
 
                 exception.getMessage();
             }
@@ -77,15 +78,15 @@ public class AgentAutomaticProcess {
 
         boolean statusService = restartServiceController.checkStatusService();
 
-        if(statusService == true){
+        if (statusService == true) {
             System.out.println("\nServiço já está iniciado.");
-        }else {
+        } else {
             restartServiceController.startService();
             Thread.sleep(2000);
 
             boolean checkServiceAgain = restartServiceController.checkStatusService();
 
-            while (checkServiceAgain == false){
+            while (checkServiceAgain == false) {
 
                 System.out.println("Erro ao iniciar o serviço. Checar se o mesmo está desativado.");
 
@@ -193,7 +194,7 @@ public class AgentAutomaticProcess {
         do {
             System.out.print("Deseja processar um Set Num junto ao ped_intall? 1 - Sim / 2 - Não - : ");
             set_num = scanner.nextInt();
-        }while (!SetNum.checkSetNum(set_num));
+        } while (!SetNum.checkSetNum(set_num));
     }
 
     private static void transformSecondsToMilliseconds(Scanner scanner) {
@@ -297,46 +298,46 @@ public class AgentAutomaticProcess {
 
     }
 
-    public static void checkFilesOutDirectory(){
+    public static void checkFilesOutDirectory() {
         File diretory = new File(diretorioSaidaAgente);
 
-        if(diretory.isDirectory()){
+        if (diretory.isDirectory()) {
             String[] filesDirectory = diretory.list();
 
-            if (filesDirectory.length > 0){
+            if (filesDirectory.length > 0) {
                 int filesInDirectory = filesDirectory.length;
                 System.out.println("Diretório não está vazio. Contém " + filesInDirectory + " arquivos.");
                 System.out.println("Iniciando limpeza da mesma...");
 
-                for (File cleanDirectory: diretory.listFiles()){
+                for (File cleanDirectory : diretory.listFiles()) {
                     cleanDirectory.delete();
                 }
 
                 System.out.println("Diretório limpo com sucesso.");
 
-            }else{
+            } else {
                 System.out.println("Diretório vazio.");
             }
         }
     }
 
-    public static void checkFilesInDirectory(){
+    public static void checkFilesInDirectory() {
         File diretory = new File(diretorioAgente);
 
-        if(diretory.isDirectory()){
+        if (diretory.isDirectory()) {
             String[] filesDirectory = diretory.list();
 
-            if (filesDirectory.length > 0){
+            if (filesDirectory.length > 0) {
                 int filesInDirectory = filesDirectory.length;
                 System.out.println("Diretório não está vazio. Contém " + filesInDirectory + " arquivos.");
 
-                for (File cleanDirectory: diretory.listFiles()){
+                for (File cleanDirectory : diretory.listFiles()) {
                     cleanDirectory.delete();
                 }
 
                 System.out.println("Diretório limpo com sucesso.");
 
-            }else{
+            } else {
                 System.out.println("Diretório vazio.");
             }
         }
@@ -350,68 +351,56 @@ public class AgentAutomaticProcess {
         File directoryControl = new File(control);
         File directoryLogs = new File(logs);
 
-        if (directoryControl.isDirectory()){
+        if (directoryControl.isDirectory()) {
             FileUtils.deleteDirectory(directoryControl);
             //directoryControl.delete();
             System.out.println("Diretório control excluído com sucesso.");
 
-            if (directoryLogs.isDirectory()){
+            if (directoryLogs.isDirectory()) {
                 FileUtils.deleteDirectory(directoryLogs);
                 //directoryLogs.delete();
                 System.out.println("Diretório logs excluído com sucesso.");
                 return true;
             }
         }
-            return false;
+        return false;
     }
 
-    public static void filesToRead() throws FileNotFoundException {
+    public static void filesToRead() throws IOException {
 
         File diretory = new File(diretorioSaidaAgente);
         String[] filesToRead = diretory.list();
 
         System.out.println("\n\n########## Iniciando leitura do diretório de SAÍDA ##########\n");
 
-        if (filesToRead.length > 0){
+        if (filesToRead.length > 0) {
             int quantityToRead = filesToRead.length;
             System.out.println("O diretório contém " + quantityToRead + " arquivos para leitura.\n");
 
             File fileList[] = diretory.listFiles();
             System.out.println("Lista de arquivos no diretório de saída: ");
 
-            for ( File file : fileList){
+            for (File file : fileList) {
                 System.out.println("Nome do arquivo: " + file.getName());
                 System.out.println("Diretório do arquivo: " + file.getAbsolutePath());
 
-                Scanner scanner = new Scanner(file);
+                input = FileUtils.readFileToString(file);
 
-                String input;
-
-                StringBuffer stringBuffer = new StringBuffer();
-
-                sucesso = 0;
-                falha = 0;
-
-                while (scanner.hasNextLine()){
-                    input = scanner.nextLine();
-                    stringBuffer.append(input+" ");
-
-                    if (input.contains("<code>100</code>")){
-                        sucesso = sucesso + 1;
-                    }if(!input.contains("<code>100</code>")){
-                        falha = falha + 1;
-                    }
+                if (input.contains("<code>100</code>")) {
+                    sucesso += 1;
+                }
+                if (!input.contains("<code>100</code>")) {
+                    falha += 1;
                 }
 
-                System.out.println("Conteúdo do arquivo: " +stringBuffer.toString());
+                System.out.println("Conteúdo do arquivo: " + input);
 
             }
             System.out.println("Sucesso: " + sucesso);
             System.out.println("Falha: " + falha);
 
-        }else{
+        } else {
             System.out.println("O diretório não contém arquivos para leitura.");
         }
     }
-
 }
