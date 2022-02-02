@@ -35,7 +35,7 @@ public class AgentAutomaticProcess {
         Scanner scanner = new Scanner(System.in);
         RestartServiceController restartServiceController = new RestartServiceController();
 
-        System.out.println("###################   Remoção Control e Logs   ###################\n");
+        System.out.println("###################   Remocao Control e Logs   ###################\n");
 
         boolean ModuleStatusService = restartServiceController.checkStatusService();
 
@@ -46,7 +46,7 @@ public class AgentAutomaticProcess {
 
                 Thread.sleep(20000);
 
-                System.out.println("\nTentando deletar diretório Control e Logs...");
+                System.out.println("\nTentando deletar diretorio Control e Logs...");
                 boolean statusDelete = tryDeleteFolderControlLogs();
 
                 if (!statusDelete) {
@@ -54,7 +54,7 @@ public class AgentAutomaticProcess {
                     Thread.sleep(10000);
                     tryDeleteFolderControlLogs();
                     Thread.sleep(10000);
-                    System.out.println("\nFinalizado processo de exclusão de diretórios.");
+                    System.out.println("\nFinalizado processo de exclusao de diretorios.");
                 }
 
             } catch (Exception exception) {
@@ -65,7 +65,7 @@ public class AgentAutomaticProcess {
         } else {
             try {
                 boolean statusDelete = tryDeleteFolderControlLogs();
-                System.out.println("\nFinalizado processo de exclusão de diretórios.");
+                System.out.println("\nFinalizado processo de exclusao de diretorios.");
 
             } catch (Exception exception) {
 
@@ -74,12 +74,12 @@ public class AgentAutomaticProcess {
         }
 
 
-        System.out.println("\n###################   Checagem serviço   ###################\n");
+        System.out.println("\n###################   Checagem servico   ###################\n");
 
         boolean statusService = restartServiceController.checkStatusService();
 
         if (statusService == true) {
-            System.out.println("\nServiço já está iniciado.");
+            System.out.println("\nServico ja esta iniciado.");
         } else {
             restartServiceController.startService();
             Thread.sleep(2000);
@@ -88,7 +88,7 @@ public class AgentAutomaticProcess {
 
             while (checkServiceAgain == false) {
 
-                System.out.println("Erro ao iniciar o serviço. Checar se o mesmo está desativado.");
+                System.out.println("Erro ao iniciar o servico. Checar se o mesmo esta desativado.");
 
                 Thread.sleep(5000);
 
@@ -96,7 +96,7 @@ public class AgentAutomaticProcess {
                 restartServiceController.startService();
             }
 
-            System.out.println("\nServiço iniciado com sucesso.");
+            System.out.println("\nServico iniciado com sucesso.");
 
         }
 
@@ -107,21 +107,21 @@ public class AgentAutomaticProcess {
         System.out.println(" 3 - Web Service NFC-e");
 
         do {
-            System.out.print("Informe para qual módulo deseja enviar o arquivo de ped_install: ");
+            System.out.print("Informe para qual modulo deseja enviar o arquivo de ped_install: ");
             modulo = scanner.nextInt();
             scanner.nextLine();
         }
         while (!Modules.checkModule(modulo));
 
 
-        System.out.print("Informe o diretório de processamento: ");
+        System.out.print("Informe o diretorio de processamento: ");
         diretorioAgente = scanner.nextLine();
 
         System.out.println("\n##################");
         checkFilesInDirectory();
         System.out.println("##################\n");
 
-        System.out.print("Informe o diretório de retorno de processamento: ");
+        System.out.print("Informe o diretorio de retorno de processamento: ");
         diretorioSaidaAgente = scanner.nextLine();
 
         System.out.println("\n##################");
@@ -185,14 +185,18 @@ public class AgentAutomaticProcess {
                 break;
         }
 
-        filesToRead();
+        while (checkQuantityFilesProcessed() == false){
+            System.out.println("\nAguardando retorno de todos os documentos processados.");
+            Thread.sleep(8000);
+        }
 
+        filesToRead();
 
     }
 
     private static void askSetNumUser(Scanner scanner) {
         do {
-            System.out.print("Deseja processar um Set Num junto ao ped_intall? 1 - Sim / 2 - Não - : ");
+            System.out.print("Deseja processar um Set Num junto ao ped_intall? 1 - Sim / 2 - Nao - : ");
             set_num = scanner.nextInt();
         } while (!SetNum.checkSetNum(set_num));
     }
@@ -203,10 +207,10 @@ public class AgentAutomaticProcess {
 
     private static void checkAnswerSetNumUser(Scanner scanner) throws InterruptedException {
         if (set_num == SetNum.SET_NUM_EXISTENTE.getCode()) {
-            System.out.print("Informe a série do do agente: ");
+            System.out.print("Informe a serie do do agente: ");
             serie = scanner.nextInt();
 
-            System.out.print("Informe o número de início do agente: ");
+            System.out.print("Informe o numero de inicio do agente: ");
             number = scanner.nextInt();
         }
 
@@ -306,17 +310,17 @@ public class AgentAutomaticProcess {
 
             if (filesDirectory.length > 0) {
                 int filesInDirectory = filesDirectory.length;
-                System.out.println("Diretório não está vazio. Contém " + filesInDirectory + " arquivos.");
+                System.out.println("Diretorio nao esta vazio. Contem " + filesInDirectory + " arquivos.");
                 System.out.println("Iniciando limpeza da mesma...");
 
                 for (File cleanDirectory : diretory.listFiles()) {
                     cleanDirectory.delete();
                 }
 
-                System.out.println("Diretório limpo com sucesso.");
+                System.out.println("Diretorio limpo com sucesso.");
 
             } else {
-                System.out.println("Diretório vazio.");
+                System.out.println("Diretorio vazio.");
             }
         }
     }
@@ -329,18 +333,31 @@ public class AgentAutomaticProcess {
 
             if (filesDirectory.length > 0) {
                 int filesInDirectory = filesDirectory.length;
-                System.out.println("Diretório não está vazio. Contém " + filesInDirectory + " arquivos.");
+                System.out.println("Diretorio nao esta vazio. Contem " + filesInDirectory + " arquivos.");
 
                 for (File cleanDirectory : diretory.listFiles()) {
                     cleanDirectory.delete();
                 }
 
-                System.out.println("Diretório limpo com sucesso.");
+                System.out.println("Diretorio limpo com sucesso.");
 
             } else {
-                System.out.println("Diretório vazio.");
+                System.out.println("Diretorio vazio.");
             }
         }
+    }
+
+    public static boolean checkQuantityFilesProcessed(){
+
+        File diretory = new File(diretorioSaidaAgente);
+        String[] filesToCount = diretory.list();
+
+        if (filesToCount.length == quantidadeArquivos){
+            return true;
+        }else{
+            return false;
+        }
+
     }
 
     public static boolean tryDeleteFolderControlLogs() throws IOException {
@@ -354,12 +371,12 @@ public class AgentAutomaticProcess {
         if (directoryControl.isDirectory()) {
             FileUtils.deleteDirectory(directoryControl);
             //directoryControl.delete();
-            System.out.println("Diretório control excluído com sucesso.");
+            System.out.println("Diretorio control excluido com sucesso.");
 
             if (directoryLogs.isDirectory()) {
                 FileUtils.deleteDirectory(directoryLogs);
                 //directoryLogs.delete();
-                System.out.println("Diretório logs excluído com sucesso.");
+                System.out.println("Diretorio logs excluido com sucesso.");
                 return true;
             }
         }
@@ -371,18 +388,18 @@ public class AgentAutomaticProcess {
         File diretory = new File(diretorioSaidaAgente);
         String[] filesToRead = diretory.list();
 
-        System.out.println("\n\n########## Iniciando leitura do diretório de SAÍDA ##########\n");
+        System.out.println("\n\n########## Iniciando leitura do diretorio de SAIDA ##########\n");
 
         if (filesToRead.length > 0) {
             int quantityToRead = filesToRead.length;
-            System.out.println("O diretório contém " + quantityToRead + " arquivos para leitura.\n");
+            System.out.println("O diretorio contem " + quantityToRead + " arquivos para leitura.\n");
 
             File fileList[] = diretory.listFiles();
-            System.out.println("Lista de arquivos no diretório de saída: ");
+            System.out.println("Lista de arquivos no direterio de saida: ");
 
             for (File file : fileList) {
                 System.out.println("Nome do arquivo: " + file.getName());
-                System.out.println("Diretório do arquivo: " + file.getAbsolutePath());
+                System.out.println("Diretorio do arquivo: " + file.getAbsolutePath());
 
                 input = FileUtils.readFileToString(file);
 
@@ -393,14 +410,14 @@ public class AgentAutomaticProcess {
                     falha += 1;
                 }
 
-                System.out.println("Conteúdo do arquivo: " + input);
+                System.out.println("Conteudo do arquivo: " + input);
 
             }
             System.out.println("Sucesso: " + sucesso);
             System.out.println("Falha: " + falha);
 
         } else {
-            System.out.println("O diretório não contém arquivos para leitura.");
+            System.out.println("O diretorio nao contem arquivos para leitura.");
         }
     }
 }
