@@ -148,7 +148,7 @@ public class AgentAutomaticProcess {
                 concentratorurl = scanner.next();
                 concentratorurl = concentratorurl.toLowerCase();
 
-                System.out.print("Informe a enterprise. Linha 2000 do manual: ");
+                System.out.print("Informe a enterprise (CNPJ da Loja). Linha 2000 do manual: ");
                 enterprise = scanner.next();
 
                 askSetNumUser(scanner);
@@ -162,7 +162,7 @@ public class AgentAutomaticProcess {
                 System.out.print("Informe o routerurl. Linha 1001 do manual: ");
                 routerurl = scanner.next();
 
-                System.out.print("Informe a enterprise. Linha 2000 do manual: ");
+                System.out.print("Informe a enterprise (CNPJ da Loja). Linha 2000 do manual: ");
                 enterprise = scanner.next();
 
                 askSetNumUser(scanner);
@@ -175,7 +175,7 @@ public class AgentAutomaticProcess {
                 System.out.print("Informe o wsurl. Linha 1002 do manual: ");
                 wsurl = scanner.next();
 
-                System.out.print("Informe a enterprise. Linha 2000 do manual: ");
+                System.out.print("Informe a enterprise (CNPJ da Loja). Linha 2000 do manual: ");
                 enterprise = scanner.next();
 
                 askSetNumUser(scanner);
