@@ -39,11 +39,6 @@ public class AgentAutomaticProcess {
         PathConfig pathConfig = new PathConfig(new File(System.getProperty("user.dir")), true);
         pathConfig.loadConfigLog4j();
 
-        pathConfig.getConcentratorTargetUrl();
-        pathConfig.getEnterprise();
-        pathConfig.getDiretorioAgente();
-        pathConfig.getDiretorioSaidaAgente();
-
         Scanner scanner = new Scanner(System.in);
         RestartServiceController restartServiceController = new RestartServiceController();
 
@@ -120,39 +115,38 @@ public class AgentAutomaticProcess {
         System.out.println(" 3 - Web Service NFC-e");
 
         do {
-            System.out.print("Informe para qual modulo deseja enviar o arquivo de ped_install: ");
-            modulo = scanner.nextInt();
-            scanner.nextLine();
+            modulo = pathConfig.getModulo();
+            //scanner.nextLine();
         }
         while (!Modules.checkModule(modulo));
 
 
-        System.out.print("Informe o diretorio de processamento: ");
-        diretorioAgente = scanner.nextLine();
+        diretorioAgente = pathConfig.getDiretorioAgente();
+        //diretorioAgente = scanner.nextLine();
 
         System.out.println("\n##################");
         checkFilesInDirectory();
         System.out.println("##################\n");
 
-        System.out.print("Informe o diretorio de retorno de processamento: ");
-        diretorioSaidaAgente = scanner.nextLine();
+        diretorioSaidaAgente = pathConfig.getDiretorioSaidaAgente();
+        //diretorioSaidaAgente = scanner.nextLine();
 
         System.out.println("\n##################");
         checkFilesOutDirectory();
         System.out.println("##################\n");
 
-        System.out.print("Informe a quantidade de arquivos a processar: ");
-        quantidadeArquivos = scanner.nextInt();
-        scanner.nextLine();
+        quantidadeArquivos = pathConfig.getQuantidadeArquivos();
+        //quantidadeArquivos = scanner.nextInt();
+        //scanner.nextLine();
 
-        System.out.print("Informe o nome do agente: ");
-        nomeAgente = scanner.next();
+        nomeAgente = pathConfig.getNomeAgente();
+        //nomeAgente = scanner.next();
         nomeAgente = nomeAgente.toUpperCase();
-        scanner.nextLine();
+        //scanner.nextLine();
 
-        System.out.print("Informe o Time Sleep(s): ");
-        transformSecondsToMilliseconds(scanner);
-        scanner.nextLine();
+        timeSleep = pathConfig.getTimeSleep();
+        transformSecondsToMilliseconds();
+        //scanner.nextLine();
 
         switch (Modules.getProcess(modulo)) {
             case AGENTE_CONCENTRATOR:
@@ -161,39 +155,39 @@ public class AgentAutomaticProcess {
                 concentratorurl = pathConfig.getConcentratorTargetUrl();
                 concentratorurl = concentratorurl.toLowerCase();
 
-                System.out.print("Informe a enterprise (CNPJ da Loja). Linha 2000 do manual: ");
-                enterprise = scanner.next();
+                enterprise = pathConfig.getEnterprise();
+                //enterprise = scanner.next();
 
-                askSetNumUser(scanner);
+                askSetNumUser();
 
-                checkAnswerSetNumUser(scanner);
+                checkAnswerSetNumUser();
 
                 break;
 
             case WEB_SERVICE_ROUTER:
 
-                System.out.print("Informe o routerurl. Linha 1001 do manual: ");
-                routerurl = scanner.next();
+                routerurl = pathConfig.getRouterUrl();
+                //routerurl = scanner.next();
 
-                System.out.print("Informe a enterprise (CNPJ da Loja). Linha 2000 do manual: ");
-                enterprise = scanner.next();
+                enterprise = pathConfig.getEnterprise();
+                //enterprise = scanner.next();
 
-                askSetNumUser(scanner);
+                askSetNumUser();
 
-                checkAnswerSetNumUser(scanner);
+                checkAnswerSetNumUser();
 
                 break;
 
             case WER_SERVICE_NFCE:
-                System.out.print("Informe o wsurl. Linha 1002 do manual: ");
-                wsurl = scanner.next();
+                wsurl = pathConfig.getWsurl();
+                //wsurl = scanner.next();
 
-                System.out.print("Informe a enterprise (CNPJ da Loja). Linha 2000 do manual: ");
-                enterprise = scanner.next();
+                enterprise = pathConfig.getEnterprise();
+                //enterprise = scanner.next();
 
-                askSetNumUser(scanner);
+                askSetNumUser();
 
-                checkAnswerSetNumUser(scanner);
+                checkAnswerSetNumUser();
 
                 break;
         }
@@ -207,24 +201,27 @@ public class AgentAutomaticProcess {
 
     }
 
-    private static void askSetNumUser(Scanner scanner) {
+    private static void askSetNumUser() {
         do {
-            System.out.print("Deseja processar um Set Num junto ao ped_intall? 1 - Sim / 2 - Nao - : ");
-            set_num = scanner.nextInt();
+            PathConfig pathConfig = new PathConfig(new File(System.getProperty("user.dir")), true);
+            set_num = pathConfig.getSetNum();
+            //set_num = scanner.nextInt();
         } while (!SetNum.checkSetNum(set_num));
     }
 
-    private static void transformSecondsToMilliseconds(Scanner scanner) {
-        timeSleep = scanner.nextInt() * 1000;
+    private static void transformSecondsToMilliseconds() {
+        PathConfig pathConfig = new PathConfig(new File(System.getProperty("user.dir")), true);
+        timeSleep = pathConfig.getTimeSleep() * 1000;
     }
 
-    private static void checkAnswerSetNumUser(Scanner scanner) throws InterruptedException {
+    private static void checkAnswerSetNumUser() throws InterruptedException {
+        PathConfig pathConfig = new PathConfig(new File(System.getProperty("user.dir")), true);
         if (set_num == SetNum.SET_NUM_EXISTENTE.getCode()) {
-            System.out.print("Informe a serie do do agente: ");
-            serie = scanner.nextInt();
+            serie = pathConfig.getSerie();
+            //serie = scanner.nextInt();
 
-            System.out.print("Informe o numero de inicio do agente: ");
-            number = scanner.nextInt();
+            number = pathConfig.getNumber();
+            //number = scanner.nextInt();
         }
 
         generateFile();

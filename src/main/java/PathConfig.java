@@ -31,6 +31,7 @@ public class PathConfig {
     private static final String MODULO = "modulo";
     private static final String TIMESLEEP = "timesleep";
     private static final String QUANTIDADEARQUIVOS = "quantidadearquivos";
+    private static final String PROCESSASETNUM = "processasetnum";
 
     private static final String CONFIG_DEFAULT = "Ajustar com config completo";
 
