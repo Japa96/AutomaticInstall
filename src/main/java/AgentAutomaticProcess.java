@@ -1,6 +1,8 @@
 import Utils.Modules;
 import Utils.SetNum;
 import org.apache.commons.io.FileUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import javax.swing.text.html.parser.Parser;
 import java.io.File;
@@ -30,10 +32,21 @@ public class AgentAutomaticProcess {
     private static int sucesso = 0;
     private static int falha = 0;
 
+    private static final Logger LOGGER = LogManager.getLogger(AgentAutomaticProcess.class.getName());
+
     public static void main(String[] args) throws InterruptedException, IOException {
+
+        PathConfig pathConfig = new PathConfig(new File(System.getProperty("user.dir")), true);
+        pathConfig.loadConfigLog4j();
+
+        pathConfig.getConcentratorTargetUrl();
+        pathConfig.getEnterprise();
+        pathConfig.getDiretorioAgente();
+        pathConfig.getDiretorioSaidaAgente();
 
         Scanner scanner = new Scanner(System.in);
         RestartServiceController restartServiceController = new RestartServiceController();
+
 
         System.out.println("###################   Remocao Control e Logs   ###################\n");
 
@@ -144,8 +157,8 @@ public class AgentAutomaticProcess {
         switch (Modules.getProcess(modulo)) {
             case AGENTE_CONCENTRATOR:
 
-                System.out.print("Informe o concentratorurl. Linha 1000 do manual: ");
-                concentratorurl = scanner.next();
+                //System.out.print("Informe o concentratorurl. Linha 1000 do manual: ");
+                concentratorurl = pathConfig.getConcentratorTargetUrl();
                 concentratorurl = concentratorurl.toLowerCase();
 
                 System.out.print("Informe a enterprise (CNPJ da Loja). Linha 2000 do manual: ");

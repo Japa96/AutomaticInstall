@@ -63,7 +63,7 @@ set CMD_LINE_ARGS=%*
 :execute
 @rem Setup the command line
 
-set CLASSPATH=%APP_HOME%\lib\AutomaticInstall-1.0.jar;%APP_HOME%\lib\commons-io-2.6.jar
+set CLASSPATH=%APP_HOME%\lib\AutomaticInstall-1.0.jar;%APP_HOME%\lib\commons-io-2.6.jar;%APP_HOME%\lib\log4j-core-2.12.4.jar;%APP_HOME%\lib\log4j-api-2.12.4.jar
 
 @rem Execute AutomaticInstall
 "%JAVA_EXE%" %DEFAULT_JVM_OPTS% %JAVA_OPTS% %AUTOMATIC_INSTALL_OPTS%  -classpath "%CLASSPATH%" AgentAutomaticProcess %CMD_LINE_ARGS%
