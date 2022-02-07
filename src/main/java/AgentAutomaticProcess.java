@@ -3,7 +3,6 @@ import Utils.SetNum;
 import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
 import javax.swing.text.html.parser.Parser;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -116,12 +115,14 @@ public class AgentAutomaticProcess {
 
         do {
             modulo = pathConfig.getModulo();
+            System.out.println("O módulo escolhido e o " + modulo);
             //scanner.nextLine();
         }
         while (!Modules.checkModule(modulo));
 
 
         diretorioAgente = pathConfig.getDiretorioAgente();
+        System.out.println("O diretório de processamento do Agente e " + diretorioAgente);
         //diretorioAgente = scanner.nextLine();
 
         System.out.println("\n##################");
@@ -129,6 +130,7 @@ public class AgentAutomaticProcess {
         System.out.println("##################\n");
 
         diretorioSaidaAgente = pathConfig.getDiretorioSaidaAgente();
+        System.out.println("O diretório de retorno do Agente e " + diretorioSaidaAgente);
         //diretorioSaidaAgente = scanner.nextLine();
 
         System.out.println("\n##################");
@@ -136,27 +138,30 @@ public class AgentAutomaticProcess {
         System.out.println("##################\n");
 
         quantidadeArquivos = pathConfig.getQuantidadeArquivos();
+        System.out.println("A quantidade de arquivos a serem gerados e processados e " + quantidadeArquivos);
         //quantidadeArquivos = scanner.nextInt();
         //scanner.nextLine();
 
         nomeAgente = pathConfig.getNomeAgente();
         //nomeAgente = scanner.next();
         nomeAgente = nomeAgente.toUpperCase();
+        System.out.println("O nome do Agente e " + nomeAgente);
         //scanner.nextLine();
 
         timeSleep = pathConfig.getTimeSleep();
+        System.out.println("O Time Sleep e de " + timeSleep + " segundos.");
         transformSecondsToMilliseconds();
         //scanner.nextLine();
 
         switch (Modules.getProcess(modulo)) {
             case AGENTE_CONCENTRATOR:
 
-                //System.out.print("Informe o concentratorurl. Linha 1000 do manual: ");
                 concentratorurl = pathConfig.getConcentratorTargetUrl();
                 concentratorurl = concentratorurl.toLowerCase();
+                System.out.println("O concentratorURL e " + concentratorurl);
 
                 enterprise = pathConfig.getEnterprise();
-                //enterprise = scanner.next();
+                System.out.println("O enterprise e " + enterprise);
 
                 askSetNumUser();
 
@@ -205,7 +210,11 @@ public class AgentAutomaticProcess {
         do {
             PathConfig pathConfig = new PathConfig(new File(System.getProperty("user.dir")), true);
             set_num = pathConfig.getSetNum();
-            //set_num = scanner.nextInt();
+            if (set_num == 1){
+                System.out.println("O processo com SET_NUM foi escolhido.");
+            }else {
+                System.out.println("O processo sem SET_NUM foi escolhido.");
+            }
         } while (!SetNum.checkSetNum(set_num));
     }
 
@@ -218,9 +227,11 @@ public class AgentAutomaticProcess {
         PathConfig pathConfig = new PathConfig(new File(System.getProperty("user.dir")), true);
         if (set_num == SetNum.SET_NUM_EXISTENTE.getCode()) {
             serie = pathConfig.getSerie();
+            System.out.println("A serie do SET_NUM e " + serie);
             //serie = scanner.nextInt();
 
             number = pathConfig.getNumber();
+            System.out.println("O numero do SET_NUM e " + number);
             //number = scanner.nextInt();
         }
 
@@ -420,7 +431,19 @@ public class AgentAutomaticProcess {
                     falha += 1;
                 }
 
-                System.out.println("Conteudo do arquivo: " + input);
+                String diretorioFinal = new File(System.getProperty("user.dir")).getParent() + "\\";
+
+                File dirRelatorio = new File(diretorioFinal + "\\" + "Relatorio");
+                if(!dirRelatorio.exists()){
+                    dirRelatorio.mkdirs();
+                }
+
+                FileWriter relatorio = new FileWriter(dirRelatorio + "\\" + "Processamento_PED_INSTALL.txt");
+                relatorio.write(input);
+                relatorio.write("\n");
+                relatorio.write("Sucesso: " + sucesso);
+                relatorio.write("Falha: " + falha);
+                //System.out.println("Conteudo do arquivo: " + input);
 
             }
             System.out.println("Sucesso: " + sucesso);
