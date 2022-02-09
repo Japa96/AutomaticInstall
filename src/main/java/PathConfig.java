@@ -32,6 +32,7 @@ public class PathConfig {
     private static final String TIMESLEEP = "timesleep";
     private static final String QUANTIDADEARQUIVOS = "quantidadearquivos";
     private static final String PROCESSASETNUM = "processasetnum";
+    private static final String LOG4J2 = "log4j2";
 
     private static final String CONFIG_DEFAULT = "Ajustar com config completo";
 
@@ -58,6 +59,9 @@ public class PathConfig {
     }
     public String getInput(){
         return readProperties().getProperty(INPUT);
+    }
+    public String getLog4j2(){
+        return readProperties().getProperty(LOG4J2);
     }
     public int getSetNum(){
         return Integer.parseInt(readProperties().getProperty(SET_NUM));
