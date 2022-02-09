@@ -3,12 +3,16 @@ import Utils.SetNum;
 import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.core.LoggerContext;
+
 import javax.swing.text.html.parser.Parser;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Scanner;
 
 public class AgentAutomaticProcess {
@@ -35,6 +39,8 @@ public class AgentAutomaticProcess {
 
     public static void main(String[] args) throws InterruptedException, IOException {
 
+        LoggerContext.getContext().reconfigure();
+
         PathConfig pathConfig = new PathConfig(new File(System.getProperty("user.dir")), true);
         pathConfig.loadConfigLog4j();
 
@@ -43,6 +49,7 @@ public class AgentAutomaticProcess {
 
 
         System.out.println("###################   Remocao Control e Logs   ###################\n");
+        LOGGER.info("###################   Remocao Control e Logs   ###################\n");
 
         boolean ModuleStatusService = restartServiceController.checkStatusService();
 
@@ -53,6 +60,7 @@ public class AgentAutomaticProcess {
 
                 Thread.sleep(20000);
 
+                LOGGER.info("\nTentando deletar diretorio Control e Logs...");
                 System.out.println("\nTentando deletar diretorio Control e Logs...");
                 boolean statusDelete = tryDeleteFolderControlLogs();
 
@@ -418,6 +426,8 @@ public class AgentAutomaticProcess {
             File fileList[] = diretory.listFiles();
             System.out.println("Lista de arquivos no direterio de saida: ");
 
+            String content = "";
+
             for (File file : fileList) {
                 System.out.println("Nome do arquivo: " + file.getName());
                 System.out.println("Diretorio do arquivo: " + file.getAbsolutePath());
@@ -431,21 +441,33 @@ public class AgentAutomaticProcess {
                     falha += 1;
                 }
 
-                String diretorioFinal = new File(System.getProperty("user.dir")).getParent() + "\\";
-
-                File dirRelatorio = new File(diretorioFinal + "\\" + "Relatorio");
-                if(!dirRelatorio.exists()){
-                    dirRelatorio.mkdirs();
-                }
-
-                FileWriter relatorio = new FileWriter(dirRelatorio + "\\" + "Processamento_PED_INSTALL.txt");
-                relatorio.write(input);
-                relatorio.write("\n");
-                relatorio.write("Sucesso: " + sucesso);
-                relatorio.write("Falha: " + falha);
-                //System.out.println("Conteudo do arquivo: " + input);
+                content += "\n" + input + "\n";
+                content += "\nNome do arquivo: " + file.getName() + "\n";
+                content += "\nDiretorio do arquivo: " + file.getAbsolutePath() + "\n\n";
+                content += "-------------------------------------------------------";
 
             }
+
+            content += "\n-------------------------------------------------------";
+            content += "\nTotal de arquivo processados com SUCESSO: " + sucesso;
+            content += "\nTotal de arquivo processados com FALHA: " + falha + "\n";
+            content += "-------------------------------------------------------\n";
+
+            String diretorioFinal = new File(System.getProperty("user.dir")).getParent() + "\\";
+
+            Date data = new Date();
+            SimpleDateFormat format = new SimpleDateFormat("ddMMyyyy-HHmmss");
+            String formattedDate = format.format(data);
+
+            File dirRelatorio = new File(diretorioFinal + "\\" + "Relatorio");
+            if(!dirRelatorio.exists()){
+                dirRelatorio.mkdirs();
+            }
+
+            FileWriter relatorio = new FileWriter(dirRelatorio + "\\" + "Processamento_PED_INSTALL_" + formattedDate + ".txt");
+            relatorio.write(content);
+            relatorio.close();
+
             System.out.println("Sucesso: " + sucesso);
             System.out.println("Falha: " + falha);
 
