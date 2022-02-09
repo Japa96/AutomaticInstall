@@ -1,5 +1,8 @@
 package Utils;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 public enum SetNum {
 
     SET_NUM_EXISTENTE(1, "Há SET_NUM no arquivo de ped_install"),
@@ -7,6 +10,7 @@ public enum SetNum {
 
     private final int code;
     private final String description;
+    private static final Logger LOGGER = LogManager.getLogger(SetNum.class.getName());
 
     SetNum(int code, String description) {
         this.code = code;
@@ -36,7 +40,7 @@ public enum SetNum {
                 return true;
             }
         }
-        System.out.println("Parâmetro de SET_NUM Inexistente.");
+        LOGGER.info("Parâmetro de SET_NUM Inexistente.");
         return false;
     }
 }

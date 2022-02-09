@@ -5,7 +5,7 @@
     <property name="rollingextension">log</property>
   </properties>
   <Appenders>
-    <RollingFile name="ExceptionLog" fileName="logs/${filename}-exception.log" filePattern="logs/${filename}-exception-%d{yyyy}-%i.${rollingextension}" ignoreExceptions="false">
+    <RollingFile name="ExceptionLog" fileName="logsAutomation/${filename}-exception.log" filePattern="logs/${filename}-exception-%d{yyyy}-%i.${rollingextension}" ignoreExceptions="false">
       <PatternLayout>
         <Pattern>%-5p - %d{dd-MM-yyyy HH:mm:ss:SSS} [%t] %c %m%n</Pattern>
       </PatternLayout>
@@ -15,7 +15,7 @@
         <SizeBasedTriggeringPolicy size="20 MB" />
       </Policies>
     </RollingFile>
-    <RollingFile name="InfoLog" fileName="logs/${filename}.log" filePattern="logs/${filename}-%d{yyyy}-%i.${rollingextension}" ignoreExceptions="false">
+    <RollingFile name="InfoLog" fileName="logsAutomation/${filename}.log" filePattern="logsAutomation/${filename}-%d{yyyy}-%i.${rollingextension}" ignoreExceptions="false">
       <PatternLayout>
         <Pattern>%-5p - %d{dd-MM-yyyy HH:mm:ss:SSS} [%t] %c %m%n</Pattern>
       </PatternLayout>

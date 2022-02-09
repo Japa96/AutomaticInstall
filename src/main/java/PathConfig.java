@@ -148,7 +148,7 @@ public class PathConfig {
         try {
             source = new ConfigurationSource(new FileInputStream(pathLog4j));
         } catch (IOException ex) {
-            System.out.println("Erro ao carregar arquivo log4j.xml" + ex);
+            LOGGER.info("Erro ao carregar arquivo log4j.xml" + ex);
         }
         Configurator.initialize(null, source);
     }

@@ -1,5 +1,8 @@
 package Utils;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 public enum Modules {
 
 
@@ -9,6 +12,7 @@ public enum Modules {
 
     private final int code;
     private final String description;
+    private static final Logger LOGGER = LogManager.getLogger(Modules.class.getName());
 
     Modules(int code, String description) {
         this.code = code;
@@ -38,7 +42,7 @@ public enum Modules {
                 return true;
             }
         }
-        System.out.println("Módulo Inesxistente.");
+        LOGGER.info("Módulo Inesxistente.");
         return false;
     }
 }

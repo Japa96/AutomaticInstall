@@ -1,3 +1,8 @@
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.core.LogEvent;
+import org.apache.logging.log4j.core.LoggerContext;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.Scanner;
@@ -5,17 +10,20 @@ import java.util.Scanner;
 public class RestartServiceController {
 
     private String service;
+    private static final Logger LOGGER = LogManager.getLogger(AgentAutomaticProcess.class.getName());
 
     public void restartService() {
+
+        LoggerContext.getContext().reconfigure();
 
         service = checkIfIsNddOrNeogridAndGetNameService();
 
         try {
             String[] command = {"cmd.exe", "/c", "net", "stop", service, "&&", "net", "start", service};
             new ProcessBuilder(command).start();
-            System.out.println("Checagem do serviço realizado com sucesso.");
+            LOGGER.info("Checagem do serviço realizado com sucesso.");
         } catch (Exception ex) {
-            System.out.println("Falha ao Finalizar / Iniciar execução do serviço.");
+            LOGGER.error("Falha ao Finalizar / Iniciar execução do serviço.");
         }
     }
 
@@ -38,7 +46,7 @@ public class RestartServiceController {
             String[] command = {"cmd.exe", "/c", "net", "start", service};
             new ProcessBuilder(command).start();
         } catch (Exception ex) {
-            System.out.println("\nFalha ao Iniciar execução do serviço.");
+            LOGGER.error("\nFalha ao Iniciar execução do serviço.");
         }
     }
 
@@ -49,11 +57,11 @@ public class RestartServiceController {
         try {
             String[] command = {"cmd.exe", "/c", "net", "stop", service};
             new ProcessBuilder(command).start();
-            System.out.println("Parando serviço do módulo.");
+            LOGGER.info("Parando serviço do módulo.");
             killProcessJavaw();
-            System.out.println("Matando processos de Javaw.exe");
+            LOGGER.info("Finalizando processos de Javaw.exe");
         } catch (Exception ex) {
-            System.out.println("Falha ao Finalizar / Iniciar execução do serviço.");
+            LOGGER.error("Falha ao Finalizar / Iniciar execução do serviço.");
         }
     }
 
@@ -72,7 +80,7 @@ public class RestartServiceController {
                 }
             }
         } catch (Exception ex) {
-            ex.getMessage();
+            LOGGER.error(ex.getMessage());
         }
         return false;
     }

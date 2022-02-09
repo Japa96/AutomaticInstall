@@ -4,13 +4,9 @@ import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.core.LoggerContext;
-
-import javax.swing.text.html.parser.Parser;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.nio.file.Files;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Scanner;
@@ -47,8 +43,6 @@ public class AgentAutomaticProcess {
         Scanner scanner = new Scanner(System.in);
         RestartServiceController restartServiceController = new RestartServiceController();
 
-
-        System.out.println("###################   Remocao Control e Logs   ###################\n");
         LOGGER.info("###################   Remocao Control e Logs   ###################\n");
 
         boolean ModuleStatusService = restartServiceController.checkStatusService();
@@ -61,7 +55,6 @@ public class AgentAutomaticProcess {
                 Thread.sleep(20000);
 
                 LOGGER.info("\nTentando deletar diretorio Control e Logs...");
-                System.out.println("\nTentando deletar diretorio Control e Logs...");
                 boolean statusDelete = tryDeleteFolderControlLogs();
 
                 if (!statusDelete) {
@@ -69,32 +62,30 @@ public class AgentAutomaticProcess {
                     Thread.sleep(10000);
                     tryDeleteFolderControlLogs();
                     Thread.sleep(10000);
-                    System.out.println("\nFinalizado processo de exclusao de diretorios.");
+                    LOGGER.info("\nFinalizado processo de exclusao de diretorios.");
                 }
 
             } catch (Exception exception) {
 
-                exception.getMessage();
+                LOGGER.error(exception.getMessage());
             }
 
         } else {
             try {
                 boolean statusDelete = tryDeleteFolderControlLogs();
-                System.out.println("\nFinalizado processo de exclusao de diretorios.");
+                LOGGER.info("\nFinalizado processo de exclusao de diretorios.");
 
             } catch (Exception exception) {
-
-                exception.getMessage();
+                LOGGER.error(exception.getMessage());
             }
         }
 
-
-        System.out.println("\n###################   Checagem servico   ###################\n");
+        LOGGER.info("\n###################   Checagem servico   ###################\n");
 
         boolean statusService = restartServiceController.checkStatusService();
 
         if (statusService == true) {
-            System.out.println("\nServico ja esta iniciado.");
+            LOGGER.info("\nServico ja esta iniciado.");
         } else {
             restartServiceController.startService();
             Thread.sleep(2000);
@@ -103,7 +94,7 @@ public class AgentAutomaticProcess {
 
             while (checkServiceAgain == false) {
 
-                System.out.println("Erro ao iniciar o servico. Checar se o mesmo esta desativado.");
+                LOGGER.error("Erro ao iniciar o servico. Checar se o mesmo esta desativado.");
 
                 Thread.sleep(5000);
 
@@ -111,65 +102,56 @@ public class AgentAutomaticProcess {
                 restartServiceController.startService();
             }
 
-            System.out.println("\nServico iniciado com sucesso.");
+            LOGGER.info("\nServico iniciado com sucesso.");
 
         }
 
-        System.out.println("\n\n###################   Bem-vindo a ferramenta de ped_install   ###################");
+        LOGGER.info("\n\n###################   Bem-vindo a ferramenta de ped_install   ###################");
 
-        System.out.println(" 1 - Agente/Concentrador");
-        System.out.println(" 2 - Web Service Router");
-        System.out.println(" 3 - Web Service NFC-e");
+        LOGGER.info(" 1 - Agente/Concentrador");
+        LOGGER.info(" 2 - Web Service Router");
+        LOGGER.info(" 3 - Web Service NFC-e");
 
         do {
             modulo = pathConfig.getModulo();
-            System.out.println("O módulo escolhido e o " + modulo);
-            //scanner.nextLine();
+            LOGGER.info("O módulo escolhido e o " + modulo);
         }
         while (!Modules.checkModule(modulo));
 
-
         diretorioAgente = pathConfig.getDiretorioAgente();
-        System.out.println("O diretório de processamento do Agente e " + diretorioAgente);
-        //diretorioAgente = scanner.nextLine();
+        LOGGER.info("O diretório de processamento do Agente e " + diretorioAgente);
 
-        System.out.println("\n##################");
+        LOGGER.info("\n##################");
         checkFilesInDirectory();
-        System.out.println("##################\n");
+        LOGGER.info("\n##################");
 
         diretorioSaidaAgente = pathConfig.getDiretorioSaidaAgente();
-        System.out.println("O diretório de retorno do Agente e " + diretorioSaidaAgente);
-        //diretorioSaidaAgente = scanner.nextLine();
+        LOGGER.info("O diretório de retorno do Agente e " + diretorioSaidaAgente);
 
-        System.out.println("\n##################");
+        LOGGER.info("\n##################");
         checkFilesOutDirectory();
-        System.out.println("##################\n");
+        LOGGER.info("\n##################");
 
         quantidadeArquivos = pathConfig.getQuantidadeArquivos();
-        System.out.println("A quantidade de arquivos a serem gerados e processados e " + quantidadeArquivos);
-        //quantidadeArquivos = scanner.nextInt();
-        //scanner.nextLine();
+        LOGGER.info("A quantidade de arquivos a serem gerados e processados e " + quantidadeArquivos);
 
         nomeAgente = pathConfig.getNomeAgente();
-        //nomeAgente = scanner.next();
         nomeAgente = nomeAgente.toUpperCase();
-        System.out.println("O nome do Agente e " + nomeAgente);
-        //scanner.nextLine();
+        LOGGER.info("O nome do Agente e " + nomeAgente);
 
         timeSleep = pathConfig.getTimeSleep();
-        System.out.println("O Time Sleep e de " + timeSleep + " segundos.");
+        LOGGER.info("O Time Sleep e de " + timeSleep + " segundos.");
         transformSecondsToMilliseconds();
-        //scanner.nextLine();
 
         switch (Modules.getProcess(modulo)) {
             case AGENTE_CONCENTRATOR:
 
                 concentratorurl = pathConfig.getConcentratorTargetUrl();
                 concentratorurl = concentratorurl.toLowerCase();
-                System.out.println("O concentratorURL e " + concentratorurl);
+                LOGGER.info("O concentratorURL e " + concentratorurl);
 
                 enterprise = pathConfig.getEnterprise();
-                System.out.println("O enterprise e " + enterprise);
+                LOGGER.info("O enterprise e " + enterprise);
 
                 askSetNumUser();
 
@@ -180,10 +162,10 @@ public class AgentAutomaticProcess {
             case WEB_SERVICE_ROUTER:
 
                 routerurl = pathConfig.getRouterUrl();
-                //routerurl = scanner.next();
+                LOGGER.info("O routerURL e " + routerurl);
 
                 enterprise = pathConfig.getEnterprise();
-                //enterprise = scanner.next();
+                LOGGER.info("O enterprise e " + enterprise);
 
                 askSetNumUser();
 
@@ -193,10 +175,10 @@ public class AgentAutomaticProcess {
 
             case WER_SERVICE_NFCE:
                 wsurl = pathConfig.getWsurl();
-                //wsurl = scanner.next();
+                LOGGER.info("O wsURL e " + routerurl);
 
                 enterprise = pathConfig.getEnterprise();
-                //enterprise = scanner.next();
+                LOGGER.info("O enterprise e " + enterprise);
 
                 askSetNumUser();
 
@@ -206,7 +188,7 @@ public class AgentAutomaticProcess {
         }
 
         while (checkQuantityFilesProcessed() == false){
-            System.out.println("\nAguardando retorno de todos os documentos processados.");
+            LOGGER.info("\nAguardando retorno de todos os documentos processados.");
             Thread.sleep(8000);
         }
 
@@ -219,9 +201,9 @@ public class AgentAutomaticProcess {
             PathConfig pathConfig = new PathConfig(new File(System.getProperty("user.dir")), true);
             set_num = pathConfig.getSetNum();
             if (set_num == 1){
-                System.out.println("O processo com SET_NUM foi escolhido.");
+                LOGGER.info("O processo com SET_NUM foi escolhido.");
             }else {
-                System.out.println("O processo sem SET_NUM foi escolhido.");
+                LOGGER.info("O processo sem SET_NUM foi escolhido.");
             }
         } while (!SetNum.checkSetNum(set_num));
     }
@@ -235,12 +217,10 @@ public class AgentAutomaticProcess {
         PathConfig pathConfig = new PathConfig(new File(System.getProperty("user.dir")), true);
         if (set_num == SetNum.SET_NUM_EXISTENTE.getCode()) {
             serie = pathConfig.getSerie();
-            System.out.println("A serie do SET_NUM e " + serie);
-            //serie = scanner.nextInt();
+            LOGGER.info("A serie do SET_NUM e " + serie);
 
             number = pathConfig.getNumber();
-            System.out.println("O numero do SET_NUM e " + number);
-            //number = scanner.nextInt();
+            LOGGER.info("O numero do SET_NUM e " + number);
         }
 
         generateFile();
@@ -248,26 +228,26 @@ public class AgentAutomaticProcess {
 
     public static void generateFile() throws InterruptedException {
         if (set_num == SetNum.SET_NUM_EXISTENTE.getCode()) {
-            System.out.println("########## Em processamento ##########\n");
+            LOGGER.info("########## Em processamento ##########\n");
             for (int i = 1; i <= quantidadeArquivos; i++) {
                 writeFileWithSetNum(i);
-                System.out.println("O arquivo com SET_NUM do " + nomeAgente + " " + i + " foi gerado com sucesso.");
+                LOGGER.info("O arquivo com SET_NUM do " + nomeAgente + " " + i + " foi gerado com sucesso.");
                 Thread.sleep(timeSleep);
             }
 
-            System.out.println("\nFinalizado o processamento de " + quantidadeArquivos + " arquivo(s) com SET_NUM para o Agente: " + nomeAgente);
-            System.out.println("\n########## Finalizado processamento ##########");
+            LOGGER.info("\nFinalizado o processamento de " + quantidadeArquivos + " arquivo(s) com SET_NUM para o Agente: " + nomeAgente);
+            LOGGER.info("\n########## Finalizado processamento ##########");
 
         }
         if (set_num == SetNum.SET_NUM_INEXISTENTE.getCode()) {
-            System.out.println("########## Em processamento ##########\n");
+            LOGGER.info("########## Em processamento ##########\n");
             for (int i = 1; i <= quantidadeArquivos; i++) {
                 writeFileWithOutSetNum(i);
-                System.out.println("O arquivo  do " + nomeAgente + " " + i + " foi gerado com sucesso.");
+                LOGGER.info("O arquivo  do " + nomeAgente + " " + i + " foi gerado com sucesso.");
                 Thread.sleep(timeSleep);
             }
-            System.out.println("\nFinalizado o processamento de " + quantidadeArquivos + " arquivo(s) para o Agente: " + nomeAgente);
-            System.out.println("\n########## Finalizado processamento ##########");
+            LOGGER.info("\nFinalizado o processamento de " + quantidadeArquivos + " arquivo(s) para o Agente: " + nomeAgente);
+            LOGGER.info("\n########## Finalizado processamento ##########");
         }
     }
 
@@ -339,17 +319,17 @@ public class AgentAutomaticProcess {
 
             if (filesDirectory.length > 0) {
                 int filesInDirectory = filesDirectory.length;
-                System.out.println("Diretorio nao esta vazio. Contem " + filesInDirectory + " arquivos.");
-                System.out.println("Iniciando limpeza da mesma...");
+                LOGGER.info("Diretorio nao esta vazio. Contem " + filesInDirectory + " arquivos.");
+                LOGGER.info("Iniciando limpeza da mesma...");
 
                 for (File cleanDirectory : diretory.listFiles()) {
                     cleanDirectory.delete();
                 }
 
-                System.out.println("Diretorio limpo com sucesso.");
+                LOGGER.info("Diretorio limpo com sucesso.");
 
             } else {
-                System.out.println("Diretorio vazio.");
+                LOGGER.error("Diretorio vazio.");
             }
         }
     }
@@ -362,16 +342,16 @@ public class AgentAutomaticProcess {
 
             if (filesDirectory.length > 0) {
                 int filesInDirectory = filesDirectory.length;
-                System.out.println("Diretorio nao esta vazio. Contem " + filesInDirectory + " arquivos.");
+                LOGGER.info("Diretorio nao esta vazio. Contem " + filesInDirectory + " arquivos.");
 
                 for (File cleanDirectory : diretory.listFiles()) {
                     cleanDirectory.delete();
                 }
 
-                System.out.println("Diretorio limpo com sucesso.");
+                LOGGER.info("Diretorio limpo com sucesso.");
 
             } else {
-                System.out.println("Diretorio vazio.");
+                LOGGER.error("Diretorio vazio.");
             }
         }
     }
@@ -399,13 +379,11 @@ public class AgentAutomaticProcess {
 
         if (directoryControl.isDirectory()) {
             FileUtils.deleteDirectory(directoryControl);
-            //directoryControl.delete();
-            System.out.println("Diretorio control excluido com sucesso.");
+            LOGGER.info("Diretorio control excluido com sucesso.");
 
             if (directoryLogs.isDirectory()) {
                 FileUtils.deleteDirectory(directoryLogs);
-                //directoryLogs.delete();
-                System.out.println("Diretorio logs excluido com sucesso.");
+                LOGGER.info("Diretorio logs excluido com sucesso.");
                 return true;
             }
         }
@@ -417,20 +395,20 @@ public class AgentAutomaticProcess {
         File diretory = new File(diretorioSaidaAgente);
         String[] filesToRead = diretory.list();
 
-        System.out.println("\n\n########## Iniciando leitura do diretorio de SAIDA ##########\n");
+        LOGGER.info("\n\n########## Iniciando leitura do diretorio de SAIDA ##########\n");
 
         if (filesToRead.length > 0) {
             int quantityToRead = filesToRead.length;
-            System.out.println("O diretorio contem " + quantityToRead + " arquivos para leitura.\n");
+            LOGGER.info("O diretorio contem " + quantityToRead + " arquivos para leitura.\n");
 
             File fileList[] = diretory.listFiles();
-            System.out.println("Lista de arquivos no direterio de saida: ");
+            LOGGER.info("Lista de arquivos no direterio de saida: ");
 
             String content = "";
 
             for (File file : fileList) {
-                System.out.println("Nome do arquivo: " + file.getName());
-                System.out.println("Diretorio do arquivo: " + file.getAbsolutePath());
+                LOGGER.info("Nome do arquivo: " + file.getName());
+                LOGGER.info("Diretorio do arquivo: " + file.getAbsolutePath());
 
                 input = FileUtils.readFileToString(file);
 
@@ -448,7 +426,6 @@ public class AgentAutomaticProcess {
 
             }
 
-            content += "\n-------------------------------------------------------";
             content += "\nTotal de arquivo processados com SUCESSO: " + sucesso;
             content += "\nTotal de arquivo processados com FALHA: " + falha + "\n";
             content += "-------------------------------------------------------\n";
@@ -468,11 +445,12 @@ public class AgentAutomaticProcess {
             relatorio.write(content);
             relatorio.close();
 
-            System.out.println("Sucesso: " + sucesso);
-            System.out.println("Falha: " + falha);
+            LOGGER.info(content);
+            LOGGER.info("Sucesso: " + sucesso);
+            LOGGER.info("Falha: " + falha);
 
         } else {
-            System.out.println("O diretorio nao contem arquivos para leitura.");
+            LOGGER.error("O diretorio nao contem arquivos para leitura.");
         }
     }
 }
