@@ -1,5 +1,6 @@
 import Utils.Modules;
 import Utils.SetNum;
+import model.ResultTests;
 import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -27,28 +28,25 @@ public class AgentAutomaticProcess {
     private static int number;
     private static int modulo;
     private static int timeSleep;
-    private static int quantidadeArquivos;
-    private static int sucesso = 0;
-    private static int falha = 0;
+
+    private static ResultTests resultTests = new ResultTests();
 
     private static final Logger LOGGER = LogManager.getLogger(AgentAutomaticProcess.class.getName());
 
     public static void main(String[] args) throws InterruptedException, IOException {
 
         PathConfig pathConfig = new PathConfig(new File(System.getProperty("user.dir")), true);
-        //pathConfig.loadConfigLog4j();
+        pathConfig.loadConfigLog4j();
 
-        //File log4j2 = new File(pathConfig.getLog4j2());
+        File log4j2 = new File(pathConfig.getLog4j2());
 
-        //LoggerContext context = (LoggerContext) LogManager.getContext(false);
-        //context.setConfigLocation(log4j2.toURI());
+        LoggerContext context = (LoggerContext) LogManager.getContext(false);
+        context.setConfigLocation(log4j2.toURI());
 
-        //LoggerContext.getContext().reconfigure();
+        LoggerContext.getContext().reconfigure();
 
         Scanner scanner = new Scanner(System.in);
         RestartServiceController restartServiceController = new RestartServiceController();
-
-        EmailProcess emailProcess = new EmailProcess();
 
         LOGGER.info("###################   Remocao Control e Logs   ###################\n");
 
@@ -139,8 +137,8 @@ public class AgentAutomaticProcess {
         checkFilesOutDirectory();
         LOGGER.info("\n##################");
 
-        quantidadeArquivos = pathConfig.getQuantidadeArquivos();
-        LOGGER.info("A quantidade de arquivos a serem gerados e processados e " + quantidadeArquivos);
+        resultTests.setQuantidadeArquivos(pathConfig.getQuantidadeArquivos());
+        LOGGER.info("A quantidade de arquivos a serem gerados e processados e " + resultTests.getQuantidadeArquivos());
 
         nomeAgente = pathConfig.getNomeAgente();
         nomeAgente = nomeAgente.toUpperCase();
@@ -200,7 +198,7 @@ public class AgentAutomaticProcess {
         }
 
         filesToRead();
-        emailProcess.envioEmail();
+        EmailProcess.envioEmail(resultTests);
 
     }
 
@@ -237,24 +235,24 @@ public class AgentAutomaticProcess {
     public static void generateFile() throws InterruptedException {
         if (set_num == SetNum.SET_NUM_EXISTENTE.getCode()) {
             LOGGER.info("########## Em processamento ##########\n");
-            for (int i = 1; i <= quantidadeArquivos; i++) {
+            for (int i = 1; i <= resultTests.getQuantidadeArquivos(); i++) {
                 writeFileWithSetNum(i);
                 LOGGER.info("O arquivo com SET_NUM do " + nomeAgente + " " + i + " foi gerado com sucesso.");
                 Thread.sleep(timeSleep);
             }
 
-            LOGGER.info("\nFinalizado o processamento de " + quantidadeArquivos + " arquivo(s) com SET_NUM para o Agente: " + nomeAgente);
+            LOGGER.info("\nFinalizado o processamento de " + resultTests.getQuantidadeArquivos() + " arquivo(s) com SET_NUM para o Agente: " + nomeAgente);
             LOGGER.info("\n########## Finalizado processamento ##########");
 
         }
         if (set_num == SetNum.SET_NUM_INEXISTENTE.getCode()) {
             LOGGER.info("########## Em processamento ##########\n");
-            for (int i = 1; i <= quantidadeArquivos; i++) {
+            for (int i = 1; i <= resultTests.getQuantidadeArquivos(); i++) {
                 writeFileWithOutSetNum(i);
                 LOGGER.info("O arquivo  do " + nomeAgente + " " + i + " foi gerado com sucesso.");
                 Thread.sleep(timeSleep);
             }
-            LOGGER.info("\nFinalizado o processamento de " + quantidadeArquivos + " arquivo(s) para o Agente: " + nomeAgente);
+            LOGGER.info("\nFinalizado o processamento de " + resultTests.getQuantidadeArquivos() + " arquivo(s) para o Agente: " + nomeAgente);
             LOGGER.info("\n########## Finalizado processamento ##########");
         }
     }
@@ -369,7 +367,7 @@ public class AgentAutomaticProcess {
         File diretory = new File(diretorioSaidaAgente);
         String[] filesToCount = diretory.list();
 
-        if (filesToCount.length == quantidadeArquivos){
+        if (filesToCount.length == resultTests.getQuantidadeArquivos()){
             return true;
         }else{
             return false;
@@ -421,10 +419,10 @@ public class AgentAutomaticProcess {
                 input = FileUtils.readFileToString(file);
 
                 if (input.contains("<code>100</code>")) {
-                    sucesso += 1;
+                    resultTests.setSucesso();
                 }
                 if (!input.contains("<code>100</code>")) {
-                    falha += 1;
+                    resultTests.setFalha();
                 }
 
                 content += "\n" + input + "\n";
@@ -434,8 +432,8 @@ public class AgentAutomaticProcess {
 
             }
 
-            content += "\nTotal de arquivo processados com SUCESSO: " + sucesso;
-            content += "\nTotal de arquivo processados com FALHA: " + falha + "\n";
+            content += "\nTotal de arquivo processados com SUCESSO: " + resultTests.getSucesso();
+            content += "\nTotal de arquivo processados com FALHA: " + resultTests.getFalha() + "\n";
             content += "-------------------------------------------------------\n";
 
             String diretorioFinal = new File(System.getProperty("user.dir")).getParent() + "\\";
@@ -454,8 +452,8 @@ public class AgentAutomaticProcess {
             relatorio.close();
 
             LOGGER.info(content);
-            LOGGER.info("Sucesso: " + sucesso);
-            LOGGER.info("Falha: " + falha);
+            LOGGER.info("Sucesso: " + resultTests.getSucesso());
+            LOGGER.info("Falha: " + resultTests.getFalha());
 
         } else {
             LOGGER.error("O diretorio nao contem arquivos para leitura.");

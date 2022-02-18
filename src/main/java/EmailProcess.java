@@ -1,4 +1,5 @@
 import Utils.Modules;
+import model.ResultTests;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -7,11 +8,11 @@ import javax.mail.internet.*;
 import java.io.File;
 import java.util.Properties;
 
-public class EmailProcess {
+public class EmailProcess{
 
     private static final Logger LOGGER = LogManager.getLogger(AgentAutomaticProcess.class.getName());
 
-    public void envioEmail() {
+    public static void envioEmail(ResultTests resultTests) {
 
         PathConfig pathConfig = new PathConfig(new File(System.getProperty("user.dir")), true);
 
@@ -69,7 +70,9 @@ public class EmailProcess {
             texto.append("<h2 align='center'>Seu de ped_install está finalizado!</h2>");
 
             texto.append("<br/>O módulo de processamento é: " + Modules.getProcess(modulo) + "<br/>");
-            texto.append("Endereço de entrega: <br/>");
+            texto.append("A quantidade de documentos processados de ped_install foi de: " + resultTests.getQuantidadeArquivos() + "<br/>");
+            texto.append("Sucesso: " + resultTests.getSucesso() + "<br/>");
+            texto.append("Falha: " + resultTests.getFalha() + "<br/>");
             texto.append("A próxima execução dos testes automatizados será no próximo dia a partir das 08:00. <br/>");
             textPart.setText(texto.toString(), "UTF-8", "html");
             multipart.addBodyPart(textPart);
