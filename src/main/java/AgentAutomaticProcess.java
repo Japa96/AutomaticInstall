@@ -36,17 +36,19 @@ public class AgentAutomaticProcess {
     public static void main(String[] args) throws InterruptedException, IOException {
 
         PathConfig pathConfig = new PathConfig(new File(System.getProperty("user.dir")), true);
-        pathConfig.loadConfigLog4j();
+        //pathConfig.loadConfigLog4j();
 
-        File log4j2 = new File(pathConfig.getLog4j2());
+        //File log4j2 = new File(pathConfig.getLog4j2());
 
-        LoggerContext context = (LoggerContext) LogManager.getContext(false);
-        context.setConfigLocation(log4j2.toURI());
+        //LoggerContext context = (LoggerContext) LogManager.getContext(false);
+        //context.setConfigLocation(log4j2.toURI());
 
-        LoggerContext.getContext().reconfigure();
+        //LoggerContext.getContext().reconfigure();
 
         Scanner scanner = new Scanner(System.in);
         RestartServiceController restartServiceController = new RestartServiceController();
+
+        EmailProcess emailProcess = new EmailProcess();
 
         LOGGER.info("###################   Remocao Control e Logs   ###################\n");
 
@@ -198,6 +200,7 @@ public class AgentAutomaticProcess {
         }
 
         filesToRead();
+        emailProcess.envioEmail();
 
     }
 
