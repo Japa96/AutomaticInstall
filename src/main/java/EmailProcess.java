@@ -46,6 +46,7 @@ public class EmailProcess{
         //session.setDebug(true);
 
         try {
+
             // Create a default MimeMessage object.
             MimeMessage message = new MimeMessage(session);
 
@@ -67,14 +68,15 @@ public class EmailProcess{
 
             Modules.getProcess(modulo);
 
-            texto.append("<h2 align='center'>Seu de ped_install está finalizado!</h2>");
+            texto.append("<h2 align='center'>Seu de ped_install esta finalizado!</h2>");
 
-            texto.append("<br/>O módulo de processamento é: " + Modules.getProcess(modulo) + "<br/>");
+            texto.append("<br/>O modulo de processamento: " + Modules.getProcess(modulo) + "<br/>");
             texto.append("A quantidade de documentos processados de ped_install foi de: " + resultTests.getQuantidadeArquivos() + "<br/>");
             texto.append("Sucesso: " + resultTests.getSucesso() + "<br/>");
             texto.append("Falha: " + resultTests.getFalha() + "<br/>");
-            texto.append("A próxima execução dos testes automatizados será no próximo dia a partir das 08:00. <br/>");
+            texto.append("A proxima execucao dos testes automatizados sera no proximo dia a partir das 08:00. <br/>");
             textPart.setText(texto.toString(), "UTF-8", "html");
+
             multipart.addBodyPart(textPart);
 
             message.setContent(multipart);

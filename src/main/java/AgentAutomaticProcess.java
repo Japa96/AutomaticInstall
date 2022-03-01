@@ -48,6 +48,7 @@ public class AgentAutomaticProcess {
         Scanner scanner = new Scanner(System.in);
         RestartServiceController restartServiceController = new RestartServiceController();
 
+        System.out.println("Iniciando processo de ped_install com sucesso"); // Informar inicio processo no prompt
         LOGGER.info("###################   Remocao Control e Logs   ###################\n");
 
         boolean ModuleStatusService = restartServiceController.checkStatusService();
@@ -199,6 +200,8 @@ public class AgentAutomaticProcess {
 
         filesToRead();
         EmailProcess.envioEmail(resultTests);
+        LOGGER.info("Processo de ped_install automatico finalizado com sucesso");
+        System.out.println("Processo de ped_install automatico finalizado com sucesso"); // Informar finalizacao processo prompt
 
     }
 
